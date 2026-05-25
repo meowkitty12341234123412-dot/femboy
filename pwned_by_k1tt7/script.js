@@ -3,36 +3,106 @@ const enter = document.getElementById("enter-screen");
 const audio = document.getElementById("bgm");
 const typed = document.querySelector(".typed-text");
 
-const sounds = [
-    "bs_songs/sound1.mp3",
-    "bs_songs/sound2.mp3",
-    "bs_songs/sound3.mp3",
-    "bs_songs/sound4.mp3"
-];
+const songFolder = "bs_songs/";
+const totalSongs = 4;
 
-function playRandom() {
-    const random = sounds[Math.floor(Math.random() * sounds.length)];
-    audio.src = random;
-    audio.volume = 0.7;
-    audio.play().catch(() => {});
+const songs = Array.from(
+    { length: totalSongs },
+    (_, i) => `${songFolder}sound${i + 1}.mp3`
+);
+
+let playlist = [];
+let currentIndex = 0;
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
 
-audio.addEventListener("ended", playRandom);
+function buildPlaylist() {
+    playlist = shuffle([...songs]);
+    currentIndex = 0;
+}
+
+function fadeIn(audio, duration = 2000) {
+    audio.volume = 0;
+
+    const step = 0.05;
+    const interval = duration * step;
+
+    const fade = setInterval(() => {
+        if (audio.volume < 0.7) {
+            audio.volume = Math.min(audio.volume + step, 0.7);
+        } else {
+            clearInterval(fade);
+        }
+    }, interval);
+}
+
+function playNextSong() {
+
+    if (currentIndex >= playlist.length) {
+        buildPlaylist();
+    }
+
+    audio.src = playlist[currentIndex];
+    currentIndex++;
+
+    audio.play()
+        .then(() => {
+            fadeIn(audio);
+        })
+        .catch(() => {});
+}
+
+audio.addEventListener("ended", playNextSong);
 
 enter.onclick = () => {
     enter.classList.add("hidden");
-    playRandom();
+
+    buildPlaylist();
+    playNextSong();
 };
 
-function copy(type, addr){
+function copy(type, addr) {
+
     navigator.clipboard.writeText(addr);
-    alert(type + " address copied:\n" + addr);
+
+    const popup = document.createElement("div");
+
+    popup.className = "copy-popup";
+    popup.innerText = `${type} copied`;
+
+    document.body.appendChild(popup);
+
+    setTimeout(() => {
+        popup.classList.add("show");
+    }, 10);
+
+    setTimeout(() => {
+
+        popup.classList.remove("show");
+
+        setTimeout(() => {
+            popup.remove();
+        }, 300);
+
+    }, 2000);
 }
 
 document.addEventListener("mousemove", e => {
-    const x = (e.clientX / window.innerWidth - 0.5) * 15;
-    const y = (e.clientY / window.innerHeight - 0.5) * -15;
-    card.style.transform = `rotateX(${y}deg) rotateY(${x}deg)`;
+
+    const x = (e.clientX / window.innerWidth - 0.5) * 18;
+    const y = (e.clientY / window.innerHeight - 0.5) * -18;
+
+    card.style.transform = `
+        rotateX(${y}deg)
+        rotateY(${x}deg)
+        translateZ(10px)
+    `;
 });
 
 const text = `Hello,
@@ -43,12 +113,42 @@ We do not deface or disrupt websites, and our focus is strictly on identifying a
 
 let i = 0;
 
-function typeWriter(){
-    if(i < text.length){
-        typed.textContent += text[i];
+function typeWriter() {
+
+    if (i < text.length) {
+
+        typed.textContent += text.charAt(i);
+
         i++;
-        setTimeout(typeWriter, 18);
+
+        const randomSpeed = Math.random() * 20 + 10;
+
+        setTimeout(typeWriter, randomSpeed);
     }
 }
 
-window.addEventListener("load", typeWriter);
+window.addEventListener("load", () => {
+
+    typed.textContent = "";
+
+    typeWriter();
+
+});
+
+document.addEventListener("keydown", e => {
+
+    if (e.code === "Space") {
+
+        e.preventDefault();
+
+        if (audio.paused) {
+            audio.play();
+        } else {
+            audio.pause();
+        }
+    }
+
+    if (e.code === "ArrowRight") {
+        playNextSong();
+    }
+});
