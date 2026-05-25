@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SolixC2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0f;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            background: linear-gradient(135deg, #00f0ff, #7b2ff7, #ff2d95);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 40px rgba(123, 47, 247, 0.3));
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            margin-top: 1.2rem;
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            animation: fadePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes fadePulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        .glow-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80vmin;
+            height: 80vmin;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid rgba(123, 47, 247, 0.08);
+            animation: ringPulse 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .glow-ring:nth-child(2) {
+            width: 60vmin;
+            height: 60vmin;
+            animation-delay: 1.5s;
+            border-color: rgba(0, 240, 255, 0.06);
+        }
+
+        .glow-ring:nth-child(3) {
+            width: 40vmin;
+            height: 40vmin;
+            animation-delay: 3s;
+            border-color: rgba(255, 45, 149, 0.06);
+        }
+
+        @keyframes ringPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.08);
+                opacity: 1;
+            }
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            animation: float linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) translateX(40px);
+                opacity: 0;
+            }
+        }
+
+        .status-bar {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 100px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00f0ff;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { box-shadow: 0 0 6px #00f0ff, 0 0 12px #00f0ff44; }
+            50% { box-shadow: 0 0 12px #00f0ff, 0 0 24px #00f0ff44; }
+        }
+
+        .status-text {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.35);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="glow-ring"></div>
+    <div class="glow-ring"></div>
+    <div class="glow-ring"></div>
+
+    <div class="container">
+        <h1>SolixC2</h1>
+        <div class="subtitle">Coming Soon</div>
+    </div>
+
+    <div class="status-bar">
+        <div class="status-dot"></div>
+        <span class="status-text">ratman gay</span>
+    </div>
+
+    <script>
+        (function() {
+            const body = document.body;
+            const count = 60;
+
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = (Math.random() * 3 + 1) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                particle.style.animationDelay = (Math.random() * 20) + 's';
+                body.appendChild(particle);
+            }
+        })();
+
+        const statusTexts = [
+            '67',
+            '404 gay pp'
+            'ratman gay pp'
+        ];
+
+        let idx = 0;
+        const statusEl = document.querySelector('.status-text');
+
+        setInterval(() => {
+            idx = (idx + 1) % statusTexts.length;
+            statusEl.style.opacity = '0';
+            setTimeout(() => {
+                statusEl.textContent = statusTexts[idx];
+                statusEl.style.opacity = '1';
+            }, 400);
+        }, 2500);
+    </script>
+</body>
+</html>
